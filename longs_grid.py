@@ -9,6 +9,7 @@ import time
 split = 6  # split the money in n orders
 spread = 1.50  # 1.50% below compared with ticker.last_price
 sleep = 900  # sleep n seconds
+min_balance = 500  # minimum balance to start buy orders
 
 mbtcapi = mercadobitcoin.Api()
 mbtctradeapi = TradeApi(b'INSERT YOUR CLIENT ID HERE',
@@ -21,7 +22,7 @@ while True:
         df_ticker = utils.ticker(mbtcapi)
         df_balance = utils.get_account_info(mbtctradeapi)
 
-        if float(df_balance.available) > 500:
+        if float(df_balance.available) > min_balance:
 
             order_size = float(df_balance.available) / split
             last_trade = float(df_ticker['last'])
