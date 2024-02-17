@@ -16,7 +16,8 @@ def ticker(mbtc):
 def get_account_info(mbtc):
     balance = json.dumps(mbtc.get_account_info())
     df_balance = pd.read_json(balance)
-    df_balance = df_balance.filter(like='brl', axis=0)
+    df_balance = df_balance.filter(items=['brl'], axis=0)
+    print(df_balance)
     df_balance = pd.json_normalize(df_balance['balance'])
 
     return df_balance
