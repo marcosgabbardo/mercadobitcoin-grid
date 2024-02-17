@@ -2,6 +2,8 @@
 
 O objetivo destes scripts é possibilitar realizar a compra escalonada de bitcoins fazendo um preço médio menor do que o de compra a mercado, aproveitando as grandes oscilações que o ativo tem em um único dia, além disso evitar a taxa de comissão normalmente maior quando se opera como taker...
 
+OBS: em cada script (long_grid.py e short_grid.py) é necessário incluir seus tokens do Mercado Bitcoin.
+
 Existem algumas configurações possíveis de se fazer dentro do script longs_grid.py:
 
 - **split** = # número de ordens que devem ser feitas
