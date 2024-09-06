@@ -5,10 +5,11 @@ from datetime import datetime
 # from datetime import timedelta
 import time
 
-split = 2  # split the money in n orders
+split = 4  # split the money in n orders
 spread = 0.5  # 1.50% below compared with ticker.last_price
-sleep = 180  # sleep n seconds
+sleep = 90  # sleep n seconds
 min_balance = 100  # minimum balance to start buy orders
+start_value = 53000 # value to start buy max and below it
 
 mbtcapi = mercadobitcoin.Api()
 mbtctradeapi = TradeApi(b'INSERT YOUR CLIENT ID HERE',
@@ -30,17 +31,23 @@ while True:
             date_time = now.strftime("%m/%d/%Y %H:%M:%S")
             print('############ - ', date_time, ' - ############')
 
-            for x in range(split):
-                limit_price = utils.round_down(last_trade * (1 - (((x + 1) * spread) / 100)), 5)  # a cada loop x% menor
-                quantity = utils.round_down(order_size / limit_price, 7)
+            if last_trade < start_value:
 
-                mbtctradeapi.place_buy_order(coin_pair="BRLBTC", quantity=str(quantity), limit_price=str(limit_price))
+                for x in range(split):
+                    limit_price = utils.round_down(last_trade * (1 - (((x + 1) * spread) / 100)), 5)  # a cada loop x% menor
+                    quantity = utils.round_down(order_size / limit_price, 7)
 
-                print('order ', x, ' => ', 'qty: ', str(quantity), ' price: ', str(limit_price))
+                    mbtctradeapi.place_buy_order(coin_pair="BRLBTC", quantity=str(quantity), limit_price=str(limit_price))
 
-            print('')
+                    print('order ', x, ' => ', 'qty: ', str(quantity), ' price: ', str(limit_price))
 
-            time.sleep(sleep)
+                print('')
+
+                time.sleep(sleep)
+
+            else:
+                print('PRECO >', start_value, ' - aguardando', sleep, 'segundos')
+                time.sleep(sleep)
         else:
             exit()
 
@@ -56,4 +63,3 @@ while True:
             mbtctradeapi.cancel_order(coin_pair="BRLBTC", order_id=row['order_id'])
             print('order_id: ', str(row['order_id']), ' - CANCELED')
         print('')
-
