@@ -2,7 +2,37 @@
 
 O objetivo destes scripts é possibilitar realizar a compra escalonada de bitcoins fazendo um preço médio menor do que o de compra a mercado, aproveitando as grandes oscilações que o ativo tem em um único dia, além disso evitar a taxa de comissão normalmente maior quando se opera como taker...
 
-OBS: em cada script (long_grid.py e short_grid.py) é necessário incluir seus tokens do Mercado Bitcoin.
+## 🗄️ Banco de Dados MySQL
+
+Este projeto agora utiliza **MySQL local** para armazenar automaticamente todas as ordens de compra e venda realizadas pelo bot, permitindo:
+- Histórico completo de todas as operações
+- Análise de performance
+- Auditoria de transações
+- Estatísticas detalhadas
+
+📖 **Documentação completa**: Veja [DATABASE.md](DATABASE.md) para instruções detalhadas de instalação e uso.
+
+### Quick Start
+
+1. Instalar dependências:
+```bash
+pip install -r requirements.txt
+```
+
+2. Configurar MySQL:
+```bash
+cp config.example.py config.py
+# Edite config.py com suas credenciais
+```
+
+3. Criar banco de dados:
+```bash
+python setup_database.py
+```
+
+## 📋 Configuração
+
+OBS: em cada script (buy_grid.py e sell_grid.py) é necessário incluir seus tokens do Mercado Bitcoin.
 
 Existem algumas configurações possíveis de se fazer dentro do script longs_grid.py:
 
