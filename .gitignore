@@ -35,6 +35,7 @@ wheels/
 
 # Logs
 *.log
+logs/
 
 # Sistema operacional
 .DS_Store
