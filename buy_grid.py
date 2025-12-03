@@ -9,7 +9,7 @@ from datetime import datetime
 import time
 import json
 from database import DatabaseManager
-from config import DB_CONFIG
+from config import DB_CONFIG, API_CONFIG, BUY_GRID_CONFIG, LOG_CONFIG
 from logger import (
     get_logger,
     log_bot_start,
@@ -20,30 +20,26 @@ from logger import (
 )
 
 # ==================== CONFIGURAÇÕES ====================
-SPLIT = 4  # Divide o saldo em N ordens
-SPREAD = 0.5  # Percentual de spread entre ordens (0.5%)
-SLEEP = 90  # Tempo de espera em segundos
-MIN_BALANCE = 100  # Saldo mínimo para iniciar operações (BRL)
-START_VALUE = 53000  # Preço máximo para começar a comprar
+# Todas as configurações agora vêm do arquivo config.py
+SPLIT = BUY_GRID_CONFIG['split']
+SPREAD = BUY_GRID_CONFIG['spread']
+SLEEP = BUY_GRID_CONFIG['sleep']
+MIN_BALANCE = BUY_GRID_CONFIG['min_balance']
+START_VALUE = BUY_GRID_CONFIG['start_value']
+COIN_PAIR = BUY_GRID_CONFIG['coin_pair']
 
 # ==================== INICIALIZAÇÃO ====================
-logger = get_logger('buy_grid', log_to_file=True)
+logger = get_logger('buy_grid', log_to_file=LOG_CONFIG['log_to_file'])
 
 # APIs do Mercado Bitcoin
 mbtcapi = mercadobitcoin.Api()
 mbtctradeapi = TradeApi(
-    b'INSERT YOUR CLIENT ID HERE',
-    b'INSERT YOUR CLIENT KEY HERE'
+    API_CONFIG['client_id'],
+    API_CONFIG['client_key']
 )
 
 # Inicializa banco de dados
-db = DatabaseManager(
-    host=DB_CONFIG['host'],
-    port=DB_CONFIG['port'],
-    database=DB_CONFIG['database'],
-    user=DB_CONFIG['user'],
-    password=DB_CONFIG['password']
-)
+db = DatabaseManager(**DB_CONFIG)
 
 # ==================== FUNÇÕES AUXILIARES ====================
 
@@ -136,7 +132,7 @@ def cancel_open_orders(orders):
             order_id = row['order_id']
 
             # Cancela na exchange
-            mbtctradeapi.cancel_order(coin_pair="BRLBTC", order_id=order_id)
+            mbtctradeapi.cancel_order(coin_pair=COIN_PAIR, order_id=order_id)
 
             # Atualiza no banco
             db.cancel_order(order_id=order_id, order_type='buy')
@@ -213,7 +209,7 @@ def create_buy_grid(ticker_price, available_balance):
 
             # Cria ordem na exchange
             response = mbtctradeapi.place_buy_order(
-                coin_pair="BRLBTC",
+                coin_pair=COIN_PAIR,
                 quantity=str(quantity),
                 limit_price=str(limit_price)
             )
